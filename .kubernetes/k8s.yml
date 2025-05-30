@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ostad-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ostad-app
+  namespace: ostad-app
+  labels:
+    app: ostad-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ostad-app
+  template:
+    metadata:
+      name: ostad-app
+      labels:
+        app: ostad-app
+    spec:
+      containers:
+        - name: ostad-app
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ostad-app-service
+  namespace: ostad-app
+spec:
+  selector:
+    app: ostad-app-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: NodePort
