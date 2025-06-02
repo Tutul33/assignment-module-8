@@ -2,9 +2,21 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ostad-app-ingress
+  namespace: tutul
   annotations:
     kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/enable-websocket: "true"
 spec:
+  tls:
+    - hosts:
+        - "tutul-k8s-1.rfft.nl"
+        - "tutul-k8s-2.rfft.nl"
+      secretName: ostad-app-tls
   rules:
     - host: "tutul-k8s-1.rfft.nl"
       http:
@@ -13,7 +25,7 @@ spec:
             path: "/"
             backend:
               service:
-                name: ostad-app-1
+                name: ostad-app-1-service  
                 port:
                   number: 80
     - host: "tutul-k8s-2.rfft.nl"
@@ -23,6 +35,6 @@ spec:
             path: "/"
             backend:
               service:
-                name: ostad-app-2
+                name: ostad-app-2-service  
                 port:
                   number: 80
